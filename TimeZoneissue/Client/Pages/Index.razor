@@ -38,6 +38,9 @@ Current Time Zone Standard Name: @CurrentTimeZoneInfo.StandardName
     TimeZoneInfo CurrentTimeZoneInfo = TimeZoneInfo.Local;
     protected override async Task OnInitializedAsync()
     {
+#if DEBUG
+        await Task.Delay(10000);
+#endif
         try
         {
             var result = await Http.GetAsync("WeatherForecast");
@@ -47,19 +50,36 @@ Current Time Zone Standard Name: @CurrentTimeZoneInfo.StandardName
 
             timeZoneList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TimeZoneInfo>>(jsonString);
 
-            foreach(dynamic t in timeZoneList)
+            foreach(TimeZoneInfo t in timeZoneList)
             {
                 Console.WriteLine(t.Id);
-                Console.WriteLine(t.Local.Id);
+
+                if (t.Id == CurrentTimeZoneInfo.Id)
+                    Console.WriteLine("Match Found");
+
+                if (t.DisplayName == CurrentTimeZoneInfo.DisplayName)
+                    Console.WriteLine("Match Found");
+
+                if (t.StandardName == CurrentTimeZoneInfo.StandardName)
+                    Console.WriteLine("Match Found");
+
+                if (t.BaseUtcOffset == CurrentTimeZoneInfo.BaseUtcOffset)
+                    Console.WriteLine("Match Found");
+
+            
+
+
+
+                //Console.WriteLine(t.Local.Id);
             }
             //// var timeZoneList = await Http.GetFromJsonAsync<IReadOnlyCollection<TimeZoneInfo>>("WeatherForecast");
 
 
 
         }
-        catch (Exception)
+        catch (Exception e)
         {
-
+            Console.WriteLine(e);
             throw;
         }
 
